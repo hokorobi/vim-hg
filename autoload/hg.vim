@@ -11,9 +11,37 @@ function! hg#Hg(...) abort
   let options = {'clients': ['System.Process.Job']}
 
   let path = s:Prelude.path2project_directory(fnamemodify(bufname('%'), ':p:h'))
-  let args = ['hg', '-R', path] + a:000
+  let args = ['hg', '-R', path] + s:_quoteargs(a:000)
   let result = s:Process.execute(args, options)
   echo result['output']
+endfunction
+
+function! s:_quoteargs(args) abort
+  " a:args = ['a', '"b', 'c"']
+  " return ['a', 'b c']
+
+  let newargs = []
+  let t = ''
+  for a in a:args
+    if len(t) == 0
+      if  a =~# '\v^"'
+        let t = a[1:]
+      else
+        call add(newargs, a)
+      endif
+    else
+      let t .= ' ' . a
+      if a =~# '\v"$'
+        call add(newargs, t[:-2])
+        let t = ''
+      endif
+    endif
+  endfor
+  if len(t) != 0
+    call add(newargs, t)
+  endif
+
+  return newargs
 endfunction
 
 let &cpo = s:save_cpo
