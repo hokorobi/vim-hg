@@ -5,13 +5,12 @@ set cpo&vim
 
 let s:Process = vital#hg#import('System.Process')
 call s:Process.register('System.Process.Job')
-let s:options = {'clients': ['System.Process.Job']}
 let s:Prelude = vital#hg#import('Prelude')
 
 function! hg#Hg(...) abort
   let path = s:Prelude.path2project_directory(fnamemodify(bufname('%'), ':p:h'))
   let args = ['hg', '-R', path] + s:_quoteargs(a:000)
-  let result = s:Process.execute(args, s:options)
+  let result = s:Process.execute(args, {'clients': ['System.Process.Job']})
   echo result['output']
 endfunction
 
