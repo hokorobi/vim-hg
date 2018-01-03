@@ -22,7 +22,9 @@ function! s:_quoteargs(args) abort
   let t = ''
   for a in a:args
     if len(t) == 0
-      if  a =~# '\v^"'
+      if a =~# '\v^".*"$'
+        call add(newargs, a[1:-2])
+      elseif a =~# '\v^"'
         let t = a[1:]
       else
         call add(newargs, a)
