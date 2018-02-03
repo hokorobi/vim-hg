@@ -9,7 +9,8 @@ let s:Prelude = vital#hg#import('Prelude')
 
 function! hg#Hg(...) abort
   let path = s:Prelude.path2project_directory(fnamemodify(bufname('%'), ':p:h'))
-  let args = ['hg', '-R', path] + s:_quoteargs(a:000)
+  let hg_path = get(g:, 'hg_path', 'hg')
+  let args = [hg_path, '-R', path] + s:_quoteargs(a:000)
   let result = s:Process.execute(args, {'clients': ['System.Process.Job']})
   echo result['output']
 endfunction
