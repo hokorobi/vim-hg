@@ -3,16 +3,13 @@ scriptencoding utf-8
 let s:save_cpo = &cpo
 set cpo&vim
 
-let s:Process = vital#hg#import('System.Process')
-call s:Process.register('System.Process.Job')
-let s:Prelude = vital#hg#import('Prelude')
+let s:V = vital#hg#new()
+let s:Prelude = s:V.import('Prelude')
 
 function! hg#Hg(...) abort
   let path = s:Prelude.path2project_directory(fnamemodify(bufname('%'), ':p:h'))
   let hg_path = get(g:, 'hg_path', 'hg')
-  let args = [hg_path, '-R', path] + s:_quoteargs(a:000)
-  let result = s:Process.execute(args, {'clients': ['System.Process.Job']})
-  echo result['output']
+  echo system_job#system([hg_path, '-R', path] + s:_quoteargs(a:000))
 endfunction
 
 function! s:_quoteargs(args) abort
